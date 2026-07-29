@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+/build/
+/dist/
+/wheels/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+
+# Local example output
+/artifacts/
+
+# Rust and maturin build output
+/target/
+/rust/target/
+/src/precision_physkit/_core*.so
+/src/precision_physkit/_core*.pyd
+/src/precision_physkit/_core*.dylib
+
+# Temporary plotting styles
+*.mplstyle

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["maturin>=1.14,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "precision-physkit"
+version = "0.1.0"
+description = "Experimental data processing toolkit for precision physics and engineering time series"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "matplotlib>=3.11.1",
+    "numpy>=2.5.1",
+    "pandas>=3.0.3",
+    "scipy>=1.18.0",
+]
+
+[project.urls]
+Repository = "https://github.com/pifuyuini/precision-physkit"
+Issues = "https://github.com/pifuyuini/precision-physkit/issues"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "maturin>=1.14.1",
+    "pytest>=9.1.1",
+    "ruff>=0.15.22",
+]
+
+[tool.maturin]
+python-source = "src"
+module-name = "precision_physkit._core"
+manifest-path = "rust/Cargo.toml"
+features = ["pyo3/extension-module"]

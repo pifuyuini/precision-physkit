@@ -1,0 +1,78 @@
+schema_version = 1
+
+[id]
+uuid = "7f77daf8-d435-487e-ab4b-019316408237"
+name = "01-precision-run"
+created_at = "2026-07-20T05:10:16+00:00"
+
+[source]
+instrument = "synthetic-daq"
+experiment = "physkit example 01"
+operator = "physkit"
+description = "Synthetic dual-channel precision-measurement data with 1/f noise, white noise, spectral lines, and NaN gaps"
+
+[data]
+files = ["01_precision_run_raw.npz"]
+format = "npz"
+fs = 2048.0
+n_samples = 122880
+t_start = 0.0
+t_end = 59.99951171875
+
+[[data.channels]]
+name = "sensor_a"
+unit = "V"
+quantity = "voltage"
+
+[[data.channels]]
+name = "sensor_b"
+unit = "V"
+quantity = "voltage"
+
+[[processing]]
+stage = "acquire"
+tool = "examples/01_pipeline_timeseries.py"
+tool_version = "0.1.0"
+params = { seed = 20260720, fs = 2048.0, duration_s = 60.0, n_nan = 444 }
+at = "2026-07-20T05:10:16+00:00"
+outputs = ["data/raw/01_precision_run_raw.npz"]
+
+[[processing]]
+stage = "fill_gaps"
+tool = "physkit.preprocess.fill_gaps"
+tool_version = "0.1.0"
+params = { method = "pchip", fill_noise = true, seed = 20260720 }
+at = "2026-07-20T05:10:16+00:00"
+outputs = []
+
+[[processing]]
+stage = "lowpass"
+tool = "physkit.filters.lowpass"
+tool_version = "0.1.0"
+params = { cutoff = 480.0, order = 4, zero_phase = true }
+at = "2026-07-20T05:10:16+00:00"
+outputs = []
+
+[[processing]]
+stage = "downsample"
+tool = "physkit.preprocess.downsample"
+tool_version = "0.1.0"
+params = { q = 2, zero_phase = true, ftype = "iir" }
+at = "2026-07-20T05:10:16+00:00"
+outputs = []
+
+[[processing]]
+stage = "spectral_analysis"
+tool = "physkit.spectral.welch_psd+lpsd"
+tool_version = "0.1.0"
+params = { welch_nperseg = 8192, Jdes = 150, Kdes = 60, xi = 0.5 }
+at = "2026-07-20T05:10:16+00:00"
+outputs = ["results/data/01_pipeline_spectra.npz"]
+
+[[processing]]
+stage = "export"
+tool = "examples/01_pipeline_timeseries.py"
+tool_version = "0.1.0"
+params = { formats = ["png", "npz", "md"] }
+at = "2026-07-20T05:10:16+00:00"
+outputs = ["results/figures/01_timeseries_gaps.png", "results/figures/01_psd_comparison.png", "results/data/01_pipeline_spectra.npz", "results/reports/01_pipeline_summary.md"]
